@@ -16,7 +16,9 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AppUsersRouteImport } from './routes/_app/users'
+import { ServerRoute as ApiSplatServerRouteImport } from './routes/api/$'
 import { ServerRoute as ApiTrpcSplatServerRouteImport } from './routes/api/trpc.$'
+import { ServerRoute as ApiRpcSplatServerRouteImport } from './routes/api/rpc.$'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -45,9 +47,19 @@ const AppUsersRoute = AppUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiSplatServerRoute = ApiSplatServerRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 const ApiTrpcSplatServerRoute = ApiTrpcSplatServerRouteImport.update({
   id: '/api/trpc/$',
   path: '/api/trpc/$',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiRpcSplatServerRoute = ApiRpcSplatServerRouteImport.update({
+  id: '/api/rpc/$',
+  path: '/api/rpc/$',
   getParentRoute: () => rootServerRouteImport,
 } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -95,28 +107,36 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
+  '/api/$': typeof ApiSplatServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/rpc/$': typeof ApiRpcSplatServerRoute
   '/api/trpc/$': typeof ApiTrpcSplatServerRoute
 }
 export interface FileServerRoutesByTo {
+  '/api/$': typeof ApiSplatServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/rpc/$': typeof ApiRpcSplatServerRoute
   '/api/trpc/$': typeof ApiTrpcSplatServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
+  '/api/$': typeof ApiSplatServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/rpc/$': typeof ApiRpcSplatServerRoute
   '/api/trpc/$': typeof ApiTrpcSplatServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$' | '/api/trpc/$'
+  fullPaths: '/api/$' | '/api/auth/$' | '/api/rpc/$' | '/api/trpc/$'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$' | '/api/trpc/$'
-  id: '__root__' | '/api/auth/$' | '/api/trpc/$'
+  to: '/api/$' | '/api/auth/$' | '/api/rpc/$' | '/api/trpc/$'
+  id: '__root__' | '/api/$' | '/api/auth/$' | '/api/rpc/$' | '/api/trpc/$'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
+  ApiSplatServerRoute: typeof ApiSplatServerRoute
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiRpcSplatServerRoute: typeof ApiRpcSplatServerRoute
   ApiTrpcSplatServerRoute: typeof ApiTrpcSplatServerRoute
 }
 
@@ -161,11 +181,25 @@ declare module '@tanstack/react-router' {
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/trpc/$': {
       id: '/api/trpc/$'
       path: '/api/trpc/$'
       fullPath: '/api/trpc/$'
       preLoaderRoute: typeof ApiTrpcSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/rpc/$': {
+      id: '/api/rpc/$'
+      path: '/api/rpc/$'
+      fullPath: '/api/rpc/$'
+      preLoaderRoute: typeof ApiRpcSplatServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
     '/api/auth/$': {
@@ -208,7 +242,9 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiSplatServerRoute: ApiSplatServerRoute,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+  ApiRpcSplatServerRoute: ApiRpcSplatServerRoute,
   ApiTrpcSplatServerRoute: ApiTrpcSplatServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport
