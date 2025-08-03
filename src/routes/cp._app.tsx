@@ -11,7 +11,7 @@ import { Button } from "@/components/button";
 import { Logo } from "@/components/logo";
 import { signOut } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/_app")({
+export const Route = createFileRoute("/cp/_app")({
   beforeLoad: ({ context: { session } }) => {
     if (!session?.user) {
       throw redirect({
@@ -34,7 +34,7 @@ function Header() {
         <Link
           className="font-semibold hover:underline"
           activeProps={{ className: "underline" }}
-          to="/users"
+          to="/cp/users"
         >
           Users
         </Link>

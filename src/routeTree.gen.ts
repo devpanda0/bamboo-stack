@@ -8,42 +8,55 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AppRouteImport } from './routes/_app'
-import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as CpAppRouteImport } from './routes/cp._app'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
-import { Route as AppUsersRouteImport } from './routes/_app/users'
+import { Route as CpAppIndexRouteImport } from './routes/cp/_app/index'
+import { Route as CpAppUsersRouteImport } from './routes/cp/_app/users'
 import { ServerRoute as ApiTrpcSplatServerRouteImport } from './routes/api/trpc.$'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
+const CpRouteImport = createFileRoute('/cp')()
 const rootServerRouteImport = createServerRootRoute()
 
+const CpRoute = CpRouteImport.update({
+  id: '/cp',
+  path: '/cp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppIndexRoute = AppIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CpAppRoute = CpAppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => CpRoute,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
-const AppUsersRoute = AppUsersRouteImport.update({
+const CpAppIndexRoute = CpAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CpAppRoute,
+} as any)
+const CpAppUsersRoute = CpAppUsersRouteImport.update({
   id: '/users',
   path: '/users',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => CpAppRoute,
 } as any)
 const ApiTrpcSplatServerRoute = ApiTrpcSplatServerRouteImport.update({
   id: '/api/trpc/$',
@@ -57,42 +70,50 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/users': typeof AppUsersRoute
   '/auth/sign-in': typeof AuthSignInRoute
-  '/': typeof AppIndexRoute
+  '/cp': typeof CpAppRouteWithChildren
+  '/cp/users': typeof CpAppUsersRoute
+  '/cp/': typeof CpAppIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/users': typeof AppUsersRoute
   '/auth/sign-in': typeof AuthSignInRoute
-  '/': typeof AppIndexRoute
+  '/cp': typeof CpAppIndexRoute
+  '/cp/users': typeof CpAppUsersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_app': typeof AppRouteWithChildren
+  '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/_app/users': typeof AppUsersRoute
   '/auth/sign-in': typeof AuthSignInRoute
-  '/_app/': typeof AppIndexRoute
+  '/cp': typeof CpRouteWithChildren
+  '/cp/_app': typeof CpAppRouteWithChildren
+  '/cp/_app/users': typeof CpAppUsersRoute
+  '/cp/_app/': typeof CpAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/auth' | '/users' | '/auth/sign-in' | '/'
+  fullPaths: '/' | '/auth' | '/auth/sign-in' | '/cp' | '/cp/users' | '/cp/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/users' | '/auth/sign-in' | '/'
+  to: '/' | '/auth' | '/auth/sign-in' | '/cp' | '/cp/users'
   id:
     | '__root__'
-    | '/_app'
+    | '/'
     | '/auth'
-    | '/_app/users'
     | '/auth/sign-in'
-    | '/_app/'
+    | '/cp'
+    | '/cp/_app'
+    | '/cp/_app/users'
+    | '/cp/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AppRoute: typeof AppRouteWithChildren
+  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  CpRoute: typeof CpRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
@@ -122,6 +143,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/cp': {
+      id: '/cp'
+      path: '/cp'
+      fullPath: '/cp'
+      preLoaderRoute: typeof CpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -129,19 +157,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_app/': {
-      id: '/_app/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cp/_app': {
+      id: '/cp/_app'
+      path: '/cp'
+      fullPath: '/cp'
+      preLoaderRoute: typeof CpAppRouteImport
+      parentRoute: typeof CpRoute
     }
     '/auth/sign-in': {
       id: '/auth/sign-in'
@@ -150,12 +178,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_app/users': {
-      id: '/_app/users'
+    '/cp/_app/': {
+      id: '/cp/_app/'
+      path: '/'
+      fullPath: '/cp/'
+      preLoaderRoute: typeof CpAppIndexRouteImport
+      parentRoute: typeof CpAppRoute
+    }
+    '/cp/_app/users': {
+      id: '/cp/_app/users'
       path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof AppUsersRouteImport
-      parentRoute: typeof AppRoute
+      fullPath: '/cp/users'
+      preLoaderRoute: typeof CpAppUsersRouteImport
+      parentRoute: typeof CpAppRoute
     }
   }
 }
@@ -178,18 +213,6 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
-interface AppRouteChildren {
-  AppUsersRoute: typeof AppUsersRoute
-  AppIndexRoute: typeof AppIndexRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppUsersRoute: AppUsersRoute,
-  AppIndexRoute: AppIndexRoute,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
-
 interface AuthRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
 }
@@ -200,9 +223,32 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface CpAppRouteChildren {
+  CpAppUsersRoute: typeof CpAppUsersRoute
+  CpAppIndexRoute: typeof CpAppIndexRoute
+}
+
+const CpAppRouteChildren: CpAppRouteChildren = {
+  CpAppUsersRoute: CpAppUsersRoute,
+  CpAppIndexRoute: CpAppIndexRoute,
+}
+
+const CpAppRouteWithChildren = CpAppRoute._addFileChildren(CpAppRouteChildren)
+
+interface CpRouteChildren {
+  CpAppRoute: typeof CpAppRouteWithChildren
+}
+
+const CpRouteChildren: CpRouteChildren = {
+  CpAppRoute: CpAppRouteWithChildren,
+}
+
+const CpRouteWithChildren = CpRoute._addFileChildren(CpRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  AppRoute: AppRouteWithChildren,
+  IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  CpRoute: CpRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

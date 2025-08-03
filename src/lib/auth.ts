@@ -9,12 +9,12 @@ export const auth = betterAuth({
     }),
     socialProviders: {
         github: {
-            clientId: Bun.env.GITHUB_CLIENT_ID,
-            clientSecret: Bun.env.GITHUB_CLIENT_SECRET,
+            clientId: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
         },
         discord: {
-            clientId: Bun.env.DISCORD_CLIENT_ID,
-            clientSecret: Bun.env.DISCORD_CLIENT_SECRET,
+            clientId: process.env.DISCORD_CLIENT_ID,
+            clientSecret: process.env.DISCORD_CLIENT_SECRET,
         },
     },
     plugins: [
