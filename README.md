@@ -2,7 +2,8 @@
 
 TanStack Start starter with **oRPC**, ArkType, Prisma ORM, better-auth and TailwindCSS v4.
 
-> This is the oRPC version of the original [kolm-start](https://github.com/kolm-start) repository, enhanced with oRPC for type-safe API development.
+> This repo is based on the following repo: [kolm-start](https://github.com/kolm-start).
+Special thanks go to unnoq for reviewing it and providing tips.
 
 ## Features
 
