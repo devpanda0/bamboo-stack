@@ -7,7 +7,7 @@ const base = os.$context<{
     headers: HeadersInit,
 }>()
 
-export const ORPCRouter = base.router;
+export const ORPCRouter = base.router.bind(base);
 
 const timingMiddleware = base.middleware(async ({ next, path }) => {
     const start = performance.now();
@@ -36,7 +36,6 @@ const sessionMiddleware = base.middleware(async ({ context, next }) => {
 
     return next({
         context: {
-            ...context,
             session: {
                 user: {
                     id: session.user.id,

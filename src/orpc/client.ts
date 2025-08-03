@@ -11,10 +11,10 @@ import {db} from "@/lib/db.ts";
 const getORPCClient = createIsomorphicFn()
     .server(() =>
         createRouterClient(router, {
-            context: {
+            context: () => ({
                 headers: getHeaders() as HeadersInit,
                 db
-            },
+            }),
         }),
     )
     .client((): RouterClient<typeof router> => {
