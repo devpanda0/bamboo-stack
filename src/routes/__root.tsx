@@ -3,12 +3,10 @@ import type {QueryClient} from "@tanstack/react-query";
 import {createRootRouteWithContext, HeadContent, Outlet, Scripts,} from "@tanstack/react-router";
 import {createServerFn} from "@tanstack/react-start";
 import {getWebRequest} from "@tanstack/react-start/server";
-import type {TRPCOptionsProxy} from "@trpc/tanstack-react-query";
 
 import {DefaultCatchBoundary} from "@/components/default-catch-boundary";
 import {auth} from "@/lib/auth";
 import appCss from "@/styles/app.css?url";
-import type {AppRouter} from "@/trpc/router";
 import {ReactQueryDevtools, TanStackRouterDevtools} from "@/utils/dev-tools";
 import {seo} from "@/utils/seo";
 
@@ -23,10 +21,7 @@ const getServerSession = createServerFn({ method: "GET" }).handler(async () => {
   });
 });
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-  trpc: TRPCOptionsProxy<AppRouter>;
-}>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient; }>()({
   beforeLoad: async () => {
     const session = await getServerSession();
 
@@ -37,9 +32,8 @@ export const Route = createRootRouteWithContext<{
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       ...seo({
-        title: "Bamboo Engine - The Ultimate Game Base for Developers",
-        description: "Bamboo Engine is a powerful game base designed for developers, offering a wide range of features and tools to streamline game development.",
-        keywords: "game base, game development, developer tools, bamboo engine, unreal engine, game engine, game framework",
+        title: "Bamboo Stack",
+        description: "A full-stack web application boilerplate",
       }),
     ],
     links: [
